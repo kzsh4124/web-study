@@ -24,6 +24,12 @@ class TCPServer:
             # save the data
             with open("server_recv.txt", "wb") as f:
                 f.write(request)
+                
+            # send the response
+            with open("server_send.txt", "rb") as f:
+                response = f.read()
+            
+            connected_socket.send(response)
 
             # close the connection
             connected_socket.close()
