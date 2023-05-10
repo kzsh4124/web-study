@@ -68,13 +68,15 @@ class WebServer:
                     else:
                         ext = ""
                     content_type = self.MIME_TYPES.get(ext, "application/octet-stream")
+                    # content type when 404
+                    if response_line == "HTTP/1.1 404 Not Found\r\n":
+                        content_type = "text/html"
                     response_header = ""
                     response_header += f"Date: {datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')}\r\n"
                     response_header += "Host: HenaServer/0.1\r\n"
                     response_header += f"Content-Length: {len(response_body)}\r\n"
                     response_header += "Connection: Close\r\n"
                     response_header += f"Content-Type: {content_type}\r\n"
-                    
                     # response
                     response = (response_line + response_header + "\r\n" ).encode() + response_body
                     connected_socket.send(response)

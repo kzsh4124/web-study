@@ -11,7 +11,7 @@ class TCPClient:
             
             # connect to server
             print("=== connecting to server ===")
-            client_socket.connect(("172.28.10.120", 80))
+            client_socket.connect(("localhost", 80))
             print("=== Established the connection! ===")
             
             with open("client_send.txt", "rb") as f:
