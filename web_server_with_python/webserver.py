@@ -43,7 +43,7 @@ class WebServer:
             print("=== server stopped ===")
             
     def create_server_socket(self) -> socket:
-                    # create socket
+            # create socket
             server_socket = socket.socket()
             server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             
@@ -69,21 +69,13 @@ class WebServer:
             response_body = self.get_static_file_content(path)
             # response line
             response_line = "HTTP/1.1 200 OK\r\n"
-            # relative path
-            relative_path = path.lstrip("/")
-            # html path
-            static_file_path = os.path.join(self.STATIC_ROOT, relative_path)
-            
-            # create response body & response line
-            with open(static_file_path, "rb") as f:
-                response_body = f.read()
-                response_line = "HTTP/1.1 200 OK\r\n"
+
         except OSError:
             response_body = b"<html><body><h1>404 Not Found</h1></body></html>"
             response_line = "HTTP/1.1 404 Not Found\r\n"
 
         # create response header
-        response_header = self.build_response_header(path, request_body, response_line)
+        response_header = self.build_response_header(path, response_body, response_line)
         # response
         response = (response_line + response_header + "\r\n" ).encode() + response_body
         client_socket.send(response)
