@@ -53,7 +53,6 @@ class WebServer:
             return server_socket
     
     def handle_client(self, client_socket: socket) -> None:
-        print("=== client start ===")
         # get the request
         request = client_socket.recv(4096)
         # save the request
@@ -90,7 +89,6 @@ class WebServer:
         4. request_header: bytes
         5. request_body: bytes
         """
-        print("=== parse start ===")
         request_line, remain = request.split(b"\r\n", maxsplit=1)
         request_header, request_body = remain.split(b"\r\n\r\n", maxsplit=1)
         # parse the request line (string)
@@ -112,7 +110,6 @@ class WebServer:
     
 
     def build_response_header(self, path: str, response_body: bytes, response_line) -> str:
-        print("===start building response===")
         """
         レスポンスヘッダーを構築する
         """
