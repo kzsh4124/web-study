@@ -24,7 +24,7 @@ class WebServer:
         finally:
             print("=== server stopped ===")
             
-    def create_server_socket(self) -> socket:
+    def create_server_socket(self) -> socket.socket:
             # create socket
             server_socket = socket.socket()
             server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)

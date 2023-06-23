@@ -14,7 +14,7 @@ class WorkerThread(Thread):
     STATIC_ROOT = os.path.join(BASE_DIR, "static")
     # MIME Type
     MIME_TYPES = {
-        "html": "text/html",
+        "html": "text/html; charset=UTF-8",
         "css": "text/css",
         "png": "image/png",
         "jpg": "image/jpg",
@@ -52,7 +52,7 @@ class WorkerThread(Thread):
                 response_body = textwrap.dedent(html).encode()
 
                 # Content-Typeを指定
-                content_type = "text/html"
+                content_type = "text/html; charset=UTF-8"
 
                 # レスポンスラインを生成
                 response_line = "HTTP/1.1 200 OK\r\n"
@@ -77,7 +77,7 @@ class WorkerThread(Thread):
                 response_body = textwrap.dedent(html).encode()
 
                 # Content-Typeを指定
-                content_type = "text/html"
+                content_type = "text/html; charset=UTF-8"
 
                 # レスポンスラインを生成
                 response_line = "HTTP/1.1 200 OK\r\n"
@@ -93,7 +93,7 @@ class WorkerThread(Thread):
 
                 except OSError:
                     response_body = b"<html><body><h1>404 Not Found</h1></body></html>"
-                    content_type = "text/html"
+                    content_type = "text/html; charset=UTF-8"
                     response_line = "HTTP/1.1 404 Not Found\r\n"
 
             # create response header
