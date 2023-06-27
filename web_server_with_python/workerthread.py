@@ -7,6 +7,7 @@ from typing import Tuple, Optional
 import textwrap
 from pprint import pformat
 import re
+import urllib.parse
 
 class WorkerThread(Thread):
     # dir definition
@@ -81,7 +82,31 @@ class WorkerThread(Thread):
 
                 # レスポンスラインを生成
                 response_line = "HTTP/1.1 200 OK\r\n"
+            elif path == "/parameters":
 
+                if method == "POST":
+                    post_params = urllib.parse.parse_qs(request_body.decode())
+                    html = f"""\
+                        <html>
+                        <body>
+                            <h1>Parameters:</h1>
+                            <pre>{pformat(post_params)}</pre>                        
+                        </body>
+                        </html>
+                    """
+                    response_body = textwrap.dedent(html).encode()
+
+                    # Content-Typeを指定
+                    content_type = "text/html; charset=UTF-8"
+
+                    # レスポンスラインを生成
+                    response_line = "HTTP/1.1 200 OK\r\n"
+                
+                # GETなどはこっち
+                else:
+                    response_body = b"<html><body><h1>405 Method Not Allowed</h1></body></html>"
+                    content_type = "text/html; charset=UTF-8"
+                    response_line = "HTTP/1.1 405 Method Not Allowed\r\n"
             else:
                 try:
                     # response body
