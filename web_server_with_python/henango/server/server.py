@@ -1,7 +1,7 @@
 import socket
-from workerthread import WorkerThread
+from henango.server.worker import Worker
 
-class WebServer:
+class Server:
 
     def serve(self):
         print("=== Server: boot server ===")
@@ -17,7 +17,7 @@ class WebServer:
                 print(f"=== Server: Client Established! The address is {address} ===")
                 
                 # Create a new thread
-                thread = WorkerThread(client_socket, address)
+                thread = Worker(client_socket, address)
                 # run the thread
                 thread.start()
 
@@ -34,8 +34,3 @@ class WebServer:
             server_socket.listen(10)
             return server_socket
     
-
-
-if __name__ == "__main__":
-    server = WebServer()
-    server.serve()
