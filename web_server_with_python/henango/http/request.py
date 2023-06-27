@@ -8,3 +8,4 @@ class HTTPRequest:
     http_version: str
     body: bytes
     headers: dict = field(default_factory=dict)
+    params: dict = field(default_factory=dict)
