@@ -53,12 +53,18 @@ class Worker(Thread):
             
             
             
-            # URL解決を試みる
+            # URL解決
             view = URLResolver().resolve(request)
 
-            # URL解決できた場合は、viewからレスポンスを取得する
+            # レスポンスを取得する
             response = view(request)
-            # pathにマッチするurl_patternが見つからなければ、静的ファイルからレスポンスを生成する
+            
+            # レスポンスボディを変換
+            if isinstance(response.body, str):
+                response.body = response.body.encode()
+
+            
+
 
             # レスポンスラインを生成
             response_line = self.build_response_line(response)
@@ -124,7 +130,7 @@ class Worker(Thread):
                 ext = ""
             # 拡張子からMIME Typeを取得
             # 知らない対応していない拡張子の場合はoctet-streamとする
-            response.content_type = self.MIME_TYPES.get(ext, "application/octet-stream")
+            response.content_type = "text/html; charset=UTF-8"
             # 追加機能: 404なときはtext/htmlにする
 
 

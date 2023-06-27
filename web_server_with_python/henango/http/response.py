@@ -1,9 +1,11 @@
-from typing import Optional
+from typing import Optional, Union
 from dataclasses import dataclass
 
 
 @dataclass
 class HTTPResponse:
-    status_code: int
-    content_type: Optional[str]
-    body: bytes
+
+
+    body: Union[bytes, str]
+    content_type: Optional[str] = None
+    status_code: int = 200
