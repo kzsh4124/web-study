@@ -9,3 +9,4 @@ class HTTPRequest:
     body: bytes
     headers: dict = field(default_factory=dict)
     params: dict = field(default_factory=dict)
+    cookies: dict = field(default_factory=dict)

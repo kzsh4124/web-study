@@ -31,6 +31,7 @@ class Worker(Thread):
     # ステータスコードとステータスラインの対応
     STATUS_LINES = {
         200: "200 OK",
+        302: "302 Found",
         404: "404 Not Found",
         405: "405 Method Not Allowed",
     }
@@ -101,12 +102,22 @@ class Worker(Thread):
         for header_row in request_header.decode().split("\r\n"):
             key, value = re.split(r": *", header_row, maxsplit=1)
             headers[key] = value
+            
+        
+        cookies = {}
+        if "Cookie" in headers:
+            # str から list へ変換 (ex) "name1=value1; name2=value2" => ["name1=value1", "name2=value2"]
+            cookie_strings = headers["Cookie"].split("; ")
+            # list から dict へ変換 (ex) ["name1=value1", "name2=value2"] => {"name1": "value1", "name2": "value2"}
+            for cookie_string in cookie_strings:
+                name, value = cookie_string.split("=", maxsplit=1)
+                cookies[name] = value
         
         # 機能追加: ルートをindex.htmlに飛ばす
         if path == '/':
             path = '/index.html'
         
-        return HTTPRequest(method=method, path=path, http_version=http_version, headers=headers, body=request_body)
+        return HTTPRequest(method=method, path=path, http_version=http_version, headers=headers, body=request_body, cookies=cookies)
     
 
     
@@ -115,7 +126,7 @@ class Worker(Thread):
         レスポンスラインを構築する
         """
         status_line = self.STATUS_LINES[response.status_code]
-        return f"HTTP/1.1 {status_line}"
+        return f"HTTP/1.1 {status_line}\r\n"
 
     def build_response_header(self, response: HTTPResponse, request: HTTPRequest ) -> str:
         """
@@ -140,5 +151,26 @@ class Worker(Thread):
         response_header += f"Content-Length: {len(response.body)}\r\n"
         response_header += "Connection: Close\r\n"
         response_header += f"Content-Type: {response.content_type}\r\n"
+        
+        for header_name, header_value in response.headers.items():
+            response_header += f"{header_name}: {header_value}\r\n"
+        
+        # Cookieヘッダーの生成
+        for cookie in response.cookies:
+            cookie_header = f"Set-Cookie: {cookie.name}={cookie.value}"
+            if cookie.expires is not None:
+                cookie_header += f"; Expires={cookie.expires.strftime('%a, %d %b %Y %H:%M:%S GMT')}"
+            if cookie.max_age is not None:
+                cookie_header += f"; Max-Age={cookie.max_age}"
+            if cookie.domain:
+                cookie_header += f"; Domain={cookie.domain}"
+            if cookie.path:
+                cookie_header += f"; Path={cookie.path}"
+            if cookie.secure:
+                cookie_header += "; Secure"
+            if cookie.http_only:
+                cookie_header += "; HttpOnly"
+
+            response_header += cookie_header + "\r\n"
 
         return response_header
